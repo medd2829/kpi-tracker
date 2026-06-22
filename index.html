@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Q3 KPI Tracker — Medio Alvine</title>
+<title>Q3 KPI Tracker — MedQA Alvine</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -239,8 +239,8 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 <div class="page active" id="page-dashboard">
   <div class="page-header">
     <div class="eyebrow">Performance Portal · Q3 2026</div>
-    <div class="page-title">Medio Alvine</div>
-    <div class="page-sub">QA/Test · Grade 3A · Reports to Head Adi Pratama</div>
+    <div class="page-title">MedQA</div>
+    <div class="page-sub">QA/Test · Grade 3A · Reports to Head</div>
   </div>
   <div style="padding:0 1rem;max-width:600px;margin:0 auto;">
     <div style="display:flex;gap:8px;margin:0.75rem 0;">
@@ -521,12 +521,12 @@ const konfirmasiO1 = [
   {id:'k1',text:'Backend O5 agent — milik siapa, sudah seberapa jauh, ready kapan di Q3? Ada fallback kalau belum ready?'},
   {id:'k2',text:'Sentry — sudah terpasang di FYP/PDS/PLN? Kalau belum, siapa yang setup dan apakah ini scope QA atau backend?'},
   {id:'k3',text:'G1 & G4 — definisi resminya apa dalam konteks Company? (G2=input gate, G3=release-ready sudah clear)'},
-  {id:'k4',text:'Module owner assignment — sudah ada mapping resmi siapa own module apa, atau Medio yang inisiasi?'},
+  {id:'k4',text:'Module owner assignment — sudah ada mapping resmi siapa own module apa, atau MedQA yang inisiasi?'},
   {id:'k5',text:'Weekly report ke CTO — preferensi format dan platform apa (Coda/spreadsheet/Mattermost)?'},
   {id:'k6',text:'G1–G4 roll out ke semua project sekaligus (FYP+PDS+PLN) atau ada urutan prioritas?'},
 ];
 const konfirmasiO2 = [
-  {id:'k7',text:'Kandidat module fullstack — sudah bisa Medio own atau masih dalam fixing phase?'},
+  {id:'k7',text:'Kandidat module fullstack — sudah bisa MedQA own atau masih dalam fixing phase?'},
   {id:'k8',text:'GitHub issues untuk escalation — di repo mana per project (FYP, PDS, PLN)?'},
   {id:'k9',text:'Specialist reviewer per domain PR — siapa yang review untuk FE, BE, data masing-masing?'},
   {id:'k10',text:'Exceeded O2: CI-gate improvement — apakah ini connect ke Playwright automation dari Q2 atau ada ekspektasi lain?'},
@@ -980,7 +980,7 @@ init();
   <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-lg);padding:1.25rem;">
     <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.75rem;">📋 Panduan Setup Google Sheets</div>
     <div style="font-size:12px;color:var(--text2);line-height:1.8;">
-      <b style="color:var(--text);">Step 1:</b> Buat Google Spreadsheet baru → beri nama <code style="background:var(--bg3);padding:1px 5px;border-radius:4px;font-family:'JetBrains Mono',monospace;">Q3 KPI Tracker - Medio Alvine</code><br><br>
+      <b style="color:var(--text);">Step 1:</b> Buat Google Spreadsheet baru → beri nama <code style="background:var(--bg3);padding:1px 5px;border-radius:4px;font-family:'JetBrains Mono',monospace;">Q3 KPI Tracker - MedQA Alvine</code><br><br>
       <b style="color:var(--text);">Step 2:</b> Buka <b>Extensions → Apps Script</b>, hapus kode yang ada, paste kode di bawah ini:<br><br>
       <div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:0.875rem;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text2);line-height:1.7;overflow-x:auto;">
 const SS = SpreadsheetApp.getActiveSpreadsheet();<br><br>
