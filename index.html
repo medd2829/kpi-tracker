@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Q3 KPI Tracker — Medio Alvine</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root {
+  --bg:#0D0F12; --bg2:#13161A; --bg3:#1A1E24; --bg4:#1F2430;
+  --border:#252A32; --border2:#2E3540;
+  --text:#E8ECF0; --text2:#8A95A3; --text3:#4D5966;
+  --o1:#0ECFB3; --o1-dim:rgba(14,207,179,0.10); --o1-mid:rgba(14,207,179,0.22);
+  --o2:#F5A623; --o2-dim:rgba(245,166,35,0.10); --o2-mid:rgba(245,166,35,0.22);
+  --green:#22C55E; --green-dim:rgba(34,197,94,0.10);
+  --yellow:#EAB308; --yellow-dim:rgba(234,179,8,0.10);
+  --red:#EF4444; --red-dim:rgba(239,68,68,0.10);
+  --blue:#3B82F6; --blue-dim:rgba(59,130,246,0.10);
+  --r:10px; --r-lg:16px;
+}
+
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;padding-bottom:100px;}
+
+/* NAV */
+.nav{position:fixed;bottom:0;left:0;right:0;background:var(--bg2);border-top:1px solid var(--border);display:flex;z-index:100;padding:0 0 env(safe-area-inset-bottom);}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 0;font-size:10px;color:var(--text3);cursor:pointer;border:none;background:none;transition:color 0.2s;}
+.nav-btn.active{color:var(--o1);}
+.nav-btn svg{width:20px;height:20px;}
+
+/* PAGES */
+.page{display:none;padding:1rem;max-width:600px;margin:0 auto;}
+.page.active{display:block;}
+
+/* HEADER */
+.page-header{padding:1rem 1rem 0.5rem;max-width:600px;margin:0 auto;}
+.eyebrow{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:4px;}
+.page-title{font-size:1.3rem;font-weight:700;letter-spacing:-0.02em;color:var(--text);}
+.page-sub{font-size:12px;color:var(--text2);margin-top:3px;}
+
+/* SETUP BANNER */
+.setup-banner{margin:1rem;padding:1rem;background:rgba(245,166,35,0.08);border:1px solid rgba(245,166,35,0.25);border-radius:var(--r);max-width:600px;margin-left:auto;margin-right:auto;}
+.setup-banner p{font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:8px;}
+.setup-input{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:8px 12px;font-size:13px;color:var(--text);font-family:'JetBrains Mono',monospace;margin-bottom:8px;}
+.setup-input:focus{outline:none;border-color:var(--o1);}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;border:none;transition:all 0.2s;}
+.btn-primary{background:var(--o1);color:#0D0F12;}
+.btn-primary:hover{opacity:0.9;}
+.btn-sm{padding:5px 12px;font-size:12px;}
+.btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border2);}
+.btn-ghost:hover{border-color:var(--text2);color:var(--text);}
+.btn-danger{background:var(--red-dim);color:var(--red);border:1px solid rgba(239,68,68,0.2);}
+
+/* CARDS */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-lg);padding:1rem;margin-bottom:0.75rem;}
+.card-label{font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px;}
+.card-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px;line-height:1.4;}
+.card-sub{font-size:12px;color:var(--text2);}
+
+/* PROGRESS BAR */
+.prog-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.prog-label{font-size:12px;color:var(--text2);flex:1;min-width:0;}
+.prog-bar-wrap{width:80px;height:5px;background:var(--bg3);border-radius:99px;overflow:hidden;flex-shrink:0;}
+.prog-bar{height:100%;border-radius:99px;transition:width 0.4s;}
+.prog-pct{font-size:11px;font-weight:600;width:32px;text-align:right;flex-shrink:0;font-family:'JetBrains Mono',monospace;}
+
+/* OUTCOME HEADER */
+.outcome-header{display:flex;align-items:center;gap:10px;margin-bottom:1rem;padding:12px 14px;border-radius:var(--r);border:1px solid;}
+.outcome-header.o1{border-color:var(--o1);background:var(--o1-dim);}
+.outcome-header.o2{border-color:var(--o2);background:var(--o2-dim);}
+.outcome-badge{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;padding:3px 8px;border-radius:6px;flex-shrink:0;}
+.o1 .outcome-badge{background:var(--o1-mid);color:var(--o1);}
+.o2 .outcome-badge{background:var(--o2-mid);color:var(--o2);}
+.outcome-info{flex:1;min-width:0;}
+.outcome-title-sm{font-size:12px;font-weight:600;color:var(--text);line-height:1.3;}
+.outcome-weight{font-size:11px;color:var(--text2);margin-top:2px;}
+
+/* CRITERIA SLIDER */
+.criteria-item{margin-bottom:1rem;padding:0.875rem;background:var(--bg3);border-radius:var(--r);border:1px solid var(--border);}
+.criteria-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:8px;}
+.criteria-name{font-size:12px;font-weight:500;color:var(--text);line-height:1.4;flex:1;}
+.criteria-pct-big{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;}
+.slider{width:100%;accent-color:var(--o1);height:4px;cursor:pointer;margin-top:6px;}
+.slider.o2{accent-color:var(--o2);}
+.criteria-tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px;}
+.tag{font-size:10px;padding:2px 7px;border-radius:99px;border:1px solid var(--border2);color:var(--text3);font-family:'JetBrains Mono',monospace;}
+.tag.green{border-color:rgba(34,197,94,0.3);color:var(--green);background:var(--green-dim);}
+.tag.yellow{border-color:rgba(234,179,8,0.3);color:var(--yellow);background:var(--yellow-dim);}
+.tag.red{border-color:rgba(239,68,68,0.3);color:var(--red);background:var(--red-dim);}
+
+/* DAILY LOG */
+.log-item{padding:0.75rem;background:var(--bg3);border-radius:var(--r);border:1px solid var(--border);margin-bottom:0.5rem;}
+.log-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;}
+.log-date{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text3);}
+.log-outcome{font-size:10px;padding:2px 7px;border-radius:99px;}
+.log-outcome.o1{background:var(--o1-mid);color:var(--o1);}
+.log-outcome.o2{background:var(--o2-mid);color:var(--o2);}
+.log-text{font-size:12px;color:var(--text2);line-height:1.5;}
+.log-delete{background:none;border:none;color:var(--text3);cursor:pointer;font-size:16px;padding:0 4px;}
+.log-delete:hover{color:var(--red);}
+
+/* TASK */
+.task-item{display:flex;align-items:flex-start;gap:10px;padding:0.75rem;background:var(--bg3);border-radius:var(--r);border:1px solid var(--border);margin-bottom:0.5rem;transition:opacity 0.2s;}
+.task-item.done{opacity:0.5;}
+.task-check{width:18px;height:18px;border-radius:5px;border:1.5px solid var(--border2);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;margin-top:1px;}
+.task-check.checked{background:var(--green);border-color:var(--green);}
+.task-check.checked::after{content:'✓';color:#0D0F12;font-size:11px;font-weight:700;}
+.task-body{flex:1;min-width:0;}
+.task-title{font-size:13px;color:var(--text);line-height:1.4;}
+.task-item.done .task-title{text-decoration:line-through;color:var(--text3);}
+.task-meta{display:flex;gap:6px;margin-top:5px;flex-wrap:wrap;}
+.task-week{font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--text3);}
+.task-delete{background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;padding:2px 4px;flex-shrink:0;}
+.task-delete:hover{color:var(--red);}
+
+/* TEXTAREA */
+.textarea{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:10px 12px;font-size:13px;color:var(--text);font-family:'Inter',sans-serif;resize:vertical;min-height:80px;line-height:1.5;}
+.textarea:focus{outline:none;border-color:var(--o1);}
+
+/* SELECT */
+.select{background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:8px 12px;font-size:13px;color:var(--text);font-family:'Inter',sans-serif;width:100%;}
+.select:focus{outline:none;border-color:var(--o1);}
+
+/* SECTION DIVIDER */
+.section-div{display:flex;align-items:center;gap:10px;margin:1.25rem 0 0.75rem;}
+.section-div-line{flex:1;height:1px;background:var(--border);}
+.section-div-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.1em;white-space:nowrap;}
+
+/* TOAST */
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:10px 16px;font-size:13px;color:var(--text);opacity:0;transition:all 0.3s;z-index:200;white-space:nowrap;box-shadow:0 8px 32px rgba(0,0,0,0.4);}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.toast.success{border-color:rgba(34,197,94,0.4);color:var(--green);}
+.toast.error{border-color:rgba(239,68,68,0.4);color:var(--red);}
+
+/* LOADING */
+.loading{display:flex;align-items:center;gap:8px;color:var(--text2);font-size:13px;padding:1rem 0;}
+.spinner{width:16px;height:16px;border:2px solid var(--border2);border-top-color:var(--o1);border-radius:50%;animation:spin 0.7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* STAT GRID */
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:1rem;}
+.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:0.875rem;}
+.stat-val{font-size:1.6rem;font-weight:700;font-family:'JetBrains Mono',monospace;line-height:1;}
+.stat-label{font-size:11px;color:var(--text2);margin-top:4px;}
+.stat-change{font-size:10px;margin-top:3px;font-family:'JetBrains Mono',monospace;}
+
+/* WEEK BADGE */
+.week-group-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.1em;margin:1rem 0 0.5rem;padding-left:2px;}
+
+/* EMPTY STATE */
+.empty{text-align:center;padding:2rem 1rem;color:var(--text3);font-size:13px;}
+.empty-icon{font-size:2rem;margin-bottom:8px;opacity:0.5;}
+
+/* INPUT ROW */
+.input-row{display:flex;gap:8px;margin-bottom:0.75rem;}
+.input-row .select,.input-row .textarea{flex:1;}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:300;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.25s;}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-lg) var(--r-lg) 0 0;padding:1.25rem;width:100%;max-width:600px;transform:translateY(100%);transition:transform 0.3s;}
+.modal-overlay.open .modal{transform:translateY(0);}
+.modal-title{font-size:15px;font-weight:600;margin-bottom:1rem;}
+.modal-actions{display:flex;gap:8px;margin-top:1rem;}
+
+/* KONFIRMASI SECTION */
+.konfirmasi-item{display:flex;gap:10px;padding:0.75rem;background:var(--bg3);border-radius:var(--r);border:1px solid var(--border);margin-bottom:0.5rem;}
+.konfirmasi-check{width:20px;height:20px;border-radius:5px;border:1.5px solid var(--border2);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;margin-top:1px;}
+.konfirmasi-check.checked{background:var(--o1);border-color:var(--o1);}
+.konfirmasi-check.checked::after{content:'✓';color:#0D0F12;font-size:11px;font-weight:700;}
+.konfirmasi-text{font-size:12px;color:var(--text2);line-height:1.5;flex:1;}
+.konfirmasi-item.checked-item .konfirmasi-text{color:var(--text3);text-decoration:line-through;}
+</style>
+</head>
+<body>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- SETUP MODAL -->
+<div class="modal-overlay" id="setupModal">
+  <div class="modal">
+    <div class="modal-title">🔧 Setup Google Sheets</div>
+    <p style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.6;">Paste URL Web App dari Google Apps Script kamu di sini. Lihat panduan setup di bawah halaman ini.</p>
+    <input class="setup-input" id="sheetUrlInput" placeholder="https://script.google.com/macros/s/..." />
+    <div class="modal-actions">
+      <button class="btn btn-primary" onclick="saveSheetUrl()">Simpan & Sambung</button>
+      <button class="btn btn-ghost" onclick="closeSetupModal()">Nanti dulu</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD LOG MODAL -->
+<div class="modal-overlay" id="logModal">
+  <div class="modal">
+    <div class="modal-title">📝 Tambah Daily Log</div>
+    <select class="select" id="logOutcome" style="margin-bottom:8px;">
+      <option value="O1">O1 — Quality System & Visibility</option>
+      <option value="O2">O2 — Defect Resolution & Module</option>
+      <option value="General">General</option>
+    </select>
+    <textarea class="textarea" id="logText" placeholder="Apa yang kamu kerjakan hari ini? Progress, blockers, insights..."></textarea>
+    <div class="modal-actions">
+      <button class="btn btn-primary" onclick="addLog()">Simpan Log</button>
+      <button class="btn btn-ghost" onclick="closeLogModal()">Batal</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD TASK MODAL -->
+<div class="modal-overlay" id="taskModal">
+  <div class="modal">
+    <div class="modal-title">✅ Tambah Task</div>
+    <input class="setup-input" id="taskTitle" placeholder="Nama task..." style="margin-bottom:8px;" />
+    <select class="select" id="taskOutcome" style="margin-bottom:8px;">
+      <option value="O1">O1 — Quality System</option>
+      <option value="O2">O2 — Defect Resolution</option>
+      <option value="General">General</option>
+    </select>
+    <select class="select" id="taskWeek" style="margin-bottom:8px;">
+      <option value="W1">Minggu 1 — Juli Awal (Foundation)</option>
+      <option value="W2">Minggu 2 — Juli Pertengahan</option>
+      <option value="W3">Minggu 3 — Juli Akhir</option>
+      <option value="W4">Minggu 4 — Agustus Awal</option>
+      <option value="W5">Minggu 5 — Agustus Pertengahan</option>
+      <option value="W6">Minggu 6 — Agustus Akhir</option>
+      <option value="W7">Minggu 7 — September Awal</option>
+      <option value="W8">Minggu 8 — September Akhir (Close)</option>
+    </select>
+    <div class="modal-actions">
+      <button class="btn btn-primary" onclick="addTask()">Tambah Task</button>
+      <button class="btn btn-ghost" onclick="closeTaskModal()">Batal</button>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE: DASHBOARD -->
+<div class="page active" id="page-dashboard">
+  <div class="page-header">
+    <div class="eyebrow">Performance Portal · Q3 2026</div>
+    <div class="page-title">Medio Alvine</div>
+    <div class="page-sub">QA/Test · Grade 3A · Reports to Ilham Adi Pratama</div>
+  </div>
+  <div style="padding:0 1rem;max-width:600px;margin:0 auto;">
+    <div style="display:flex;gap:8px;margin:0.75rem 0;">
+      <button class="btn btn-ghost btn-sm" onclick="openSetupModal()">⚙ Google Sheets</button>
+      <span id="syncStatus" style="font-size:11px;color:var(--text3);display:flex;align-items:center;gap:5px;"></span>
+    </div>
+
+    <!-- OVERALL -->
+    <div class="card" style="margin-bottom:0.75rem;">
+      <div class="card-label" style="color:var(--text3)">Overall Q3 Progress</div>
+      <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:10px;">
+        <span id="overallPct" style="font-size:2.5rem;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--o1);">0%</span>
+        <span style="font-size:12px;color:var(--text2);">rata-rata tertimbang</span>
+      </div>
+      <div style="height:8px;background:var(--bg3);border-radius:99px;overflow:hidden;margin-bottom:12px;">
+        <div id="overallBar" style="height:100%;border-radius:99px;background:linear-gradient(90deg,var(--o1),var(--o2));transition:width 0.5s;width:0%;"></div>
+      </div>
+      <div class="prog-row">
+        <span class="prog-label">O1 · Quality System (60%)</span>
+        <div class="prog-bar-wrap"><div class="prog-bar" id="dashO1Bar" style="background:var(--o1);width:0%;"></div></div>
+        <span class="prog-pct" id="dashO1Pct" style="color:var(--o1);">0%</span>
+      </div>
+      <div class="prog-row">
+        <span class="prog-label">O2 · Defect Resolution (40%)</span>
+        <div class="prog-bar-wrap"><div class="prog-bar" id="dashO2Bar" style="background:var(--o2);width:0%;"></div></div>
+        <span class="prog-pct" id="dashO2Pct" style="color:var(--o2);">0%</span>
+      </div>
+    </div>
+
+    <!-- STAT GRID -->
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-val" id="statTasks" style="color:var(--green);">0</div>
+        <div class="stat-label">Task selesai hari ini</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" id="statLogs" style="color:var(--o1);">0</div>
+        <div class="stat-label">Total log entries</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" id="statKonfirmasi" style="color:var(--yellow);">0</div>
+        <div class="stat-label">Konfirmasi pending</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" id="statDaysLeft" style="color:var(--o2);">92</div>
+        <div class="stat-label">Hari tersisa Q3</div>
+      </div>
+    </div>
+
+    <!-- TODAY TASKS -->
+    <div class="section-div"><div class="section-div-line"></div><div class="section-div-label">Task hari ini</div><div class="section-div-line"></div></div>
+    <div id="todayTasks">
+      <div class="empty"><div class="empty-icon">☑️</div>Belum ada task hari ini</div>
+    </div>
+
+    <!-- RECENT LOGS -->
+    <div class="section-div"><div class="section-div-line"></div><div class="section-div-label">Log terbaru</div><div class="section-div-line"></div></div>
+    <div id="recentLogs">
+      <div class="empty"><div class="empty-icon">📝</div>Belum ada log</div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE: PROGRESS -->
+<div class="page" id="page-progress">
+  <div class="page-header">
+    <div class="eyebrow">Q3 2026</div>
+    <div class="page-title">Progress Kriteria</div>
+    <div class="page-sub">Update % per kriteria — disimpan ke Google Sheets</div>
+  </div>
+  <div style="padding:0 1rem;max-width:600px;margin:0.5rem auto 0;">
+    <button class="btn btn-primary" style="width:100%;justify-content:center;margin-bottom:1rem;" onclick="saveProgress()">💾 Simpan Progress</button>
+
+    <!-- O1 -->
+    <div class="outcome-header o1">
+      <span class="outcome-badge">O1</span>
+      <div class="outcome-info">
+        <div class="outcome-title-sm">Quality holds across every project, visible to CTO</div>
+        <div class="outcome-weight">Weight 60%</div>
+      </div>
+    </div>
+
+    <div class="criteria-item" id="ci-o1k1">
+      <div class="criteria-top">
+        <div class="criteria-name">K1 · Enforce 4 Delivery Gates G1–G4 (FYP, PDS, PLN)</div>
+        <div class="criteria-pct-big" id="pct-o1k1" style="color:var(--o1);">0%</div>
+      </div>
+      <input type="range" class="slider" min="0" max="100" value="0" oninput="updateSlider('o1k1',this.value)" />
+      <div class="criteria-tags"><span class="tag red">dari 0</span><span class="tag">semua project</span></div>
+    </div>
+
+    <div class="criteria-item" id="ci-o1k2">
+      <div class="criteria-top">
+        <div class="criteria-name">K2 · Quality Artifacts Standardized per Module</div>
+        <div class="criteria-pct-big" id="pct-o1k2" style="color:var(--o1);">0%</div>
+      </div>
+      <input type="range" class="slider" min="0" max="100" value="0" oninput="updateSlider('o1k2',this.value)" />
+      <div class="criteria-tags"><span class="tag green">fondasi dari Q2</span><span class="tag">Coda</span></div>
+    </div>
+
+    <div class="criteria-item" id="ci-o1k3">
+      <div class="criteria-top">
+        <div class="criteria-name">K3 · Quality Monitoring/Observability Live (Sentry)</div>
+        <div class="criteria-pct-big" id="pct-o1k3" style="color:var(--o1);">0%</div>
+      </div>
+      <input type="range" class="slider" min="0" max="100" value="0" oninput="updateSlider('o1k3',this.value)" />
+      <div class="criteria-tags"><span class="tag red">skill gap: Sentry</span><span class="tag yellow">setup dari 0</span></div>
+    </div>
+
+    <div class="criteria-item" id="ci-o1k4">
+      <div class="criteria-top">
+        <div class="criteria-name">K4 · Weekly Quality Report ke CTO</div>
+        <div class="criteria-pct-big" id="pct-o1k4" style="color:var(--o1);">0%</div>
+      </div>
+      <input type="range" class="slider" min="0" max="100" value="0" oninput="updateSlider('o1k4',this.value)" />
+      <div class="criteria-tags"><span class="tag yellow">inisiasi baru</span><span class="tag red">depend on O5</span></div>
+    </div>
+
+    <div style="margin:1.25rem 0 0.75rem;"></div>
+
+    <!-- O2 -->
+    <div class="outcome-header o2">
+      <span class="outcome-badge">O2</span>
+      <div class="outcome-info">
+        <div class="outcome-title-sm">Speed up defect resolution & module implementation</div>
+        <div class="outcome-weight">Weight 40% · Path to SDET</div>
+      </div>
+    </div>
+
+    <div class="criteria-item" id="ci-o2k1">
+      <div class="criteria-top">
+        <div class="criteria-name">K1 · Fix-in-place ≥30% by End of Q3</div>
+        <div class="criteria-pct-big" id="pct-o2k1" style="color:var(--o2);">0%</div>
+      </div>
+      <input type="range" class="slider o2" min="0" max="100" value="0" oninput="updateSlider('o2k1',this.value)" />
+      <div class="criteria-tags"><span class="tag yellow">baseline bulan 1</span><span class="tag green">AI-assisted</span></div>
+    </div>
+
+    <div class="criteria-item" id="ci-o2k2">
+      <div class="criteria-top">
+        <div class="criteria-name">K2 · Guardrails — Semua Fix via PR Specialist-Reviewed</div>
+        <div class="criteria-pct-big" id="pct-o2k2" style="color:var(--o2);">0%</div>
+      </div>
+      <input type="range" class="slider o2" min="0" max="100" value="0" oninput="updateSlider('o2k2',this.value)" />
+      <div class="criteria-tags"><span class="tag green">sudah jalan</span><span class="tag yellow">perlu konsisten</span></div>
+    </div>
+
+    <div class="criteria-item" id="ci-o2k3">
+      <div class="criteria-top">
+        <div class="criteria-name">K3 · Clean Escalation via GitHub Issues</div>
+        <div class="criteria-pct-big" id="pct-o2k3" style="color:var(--o2);">0%</div>
+      </div>
+      <input type="range" class="slider o2" min="0" max="100" value="0" oninput="updateSlider('o2k3',this.value)" />
+      <div class="criteria-tags"><span class="tag red">shift dari Mattermost</span><span class="tag red">depend on O5</span></div>
+    </div>
+
+    <div class="criteria-item" id="ci-o2k4">
+      <div class="criteria-top">
+        <div class="criteria-name">K4 · Fullstack Ownership — 3 Module End-to-End</div>
+        <div class="criteria-pct-big" id="pct-o2k4" style="color:var(--o2);">0%</div>
+      </div>
+      <input type="range" class="slider o2" min="0" max="100" value="0" oninput="updateSlider('o2k4',this.value)" />
+      <div class="criteria-tags"><span class="tag green">kandidat ada</span><span class="tag red">gap: BE/API/data</span></div>
+    </div>
+
+    <div class="criteria-item" id="ci-o2k5">
+      <div class="criteria-top">
+        <div class="criteria-name">K5 · Timebox ≤45 Menit — Over = Escalate</div>
+        <div class="criteria-pct-big" id="pct-o2k5" style="color:var(--o2);">0%</div>
+      </div>
+      <input type="range" class="slider o2" min="0" max="100" value="0" oninput="updateSlider('o2k5',this.value)" />
+      <div class="criteria-tags"><span class="tag green">Claude sudah jadi habit</span></div>
+    </div>
+
+    <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:0.5rem;" onclick="saveProgress()">💾 Simpan Progress</button>
+  </div>
+</div>
+
+<!-- PAGE: TASKS -->
+<div class="page" id="page-tasks">
+  <div class="page-header">
+    <div class="eyebrow">Q3 2026</div>
+    <div class="page-title">Task & Checklist</div>
+    <div class="page-sub">Template per minggu + task custom</div>
+  </div>
+  <div style="padding:0 1rem;max-width:600px;margin:0.5rem auto 0;">
+    <button class="btn btn-primary btn-sm" onclick="openTaskModal()" style="margin-bottom:0.75rem;">+ Tambah Task</button>
+    <button class="btn btn-ghost btn-sm" onclick="loadTemplateTasks()" style="margin-bottom:0.75rem;margin-left:8px;">📋 Load Template</button>
+
+    <div id="taskList"></div>
+  </div>
+</div>
+
+<!-- PAGE: LOG -->
+<div class="page" id="page-log">
+  <div class="page-header">
+    <div class="eyebrow">Q3 2026</div>
+    <div class="page-title">Daily Log</div>
+    <div class="page-sub">Catatan harian progress, blockers & insights</div>
+  </div>
+  <div style="padding:0 1rem;max-width:600px;margin:0.5rem auto 0;">
+    <button class="btn btn-primary btn-sm" onclick="openLogModal()" style="margin-bottom:1rem;">+ Tambah Log</button>
+    <div id="logList"></div>
+  </div>
+</div>
+
+<!-- PAGE: KONFIRMASI -->
+<div class="page" id="page-konfirmasi">
+  <div class="page-header">
+    <div class="eyebrow">Sebelum Commit Strategy</div>
+    <div class="page-title">Konfirmasi ke Pak Ilham</div>
+    <div class="page-sub">Checklist pertanyaan yang harus dijawab sebelum Q3 dimulai</div>
+  </div>
+  <div style="padding:0 1rem;max-width:600px;margin:0.5rem auto 0;">
+
+    <div class="outcome-header o1" style="margin-bottom:0.75rem;">
+      <span class="outcome-badge">O1</span>
+      <div class="outcome-info"><div class="outcome-title-sm">Quality System & Visibility</div></div>
+    </div>
+
+    <div id="konfirmasiO1List"></div>
+
+    <div class="outcome-header o2" style="margin-top:1rem;margin-bottom:0.75rem;">
+      <span class="outcome-badge">O2</span>
+      <div class="outcome-info"><div class="outcome-title-sm">Defect Resolution & Module</div></div>
+    </div>
+
+    <div id="konfirmasiO2List"></div>
+
+    <div style="margin-top:1rem;padding:0.875rem;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);">
+      <div style="font-size:11px;color:var(--text3);font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px;">Progress Konfirmasi</div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="flex:1;height:6px;background:var(--bg3);border-radius:99px;overflow:hidden;">
+          <div id="konfirmasiBar" style="height:100%;background:var(--yellow);border-radius:99px;transition:width 0.3s;width:0%;"></div>
+        </div>
+        <span id="konfirmasiPct" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--yellow);font-weight:600;">0/10</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav class="nav">
+  <button class="nav-btn active" onclick="showPage('dashboard',this)">
+    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+    Dashboard
+  </button>
+  <button class="nav-btn" onclick="showPage('progress',this)">
+    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+    Progress
+  </button>
+  <button class="nav-btn" onclick="showPage('tasks',this)">
+    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+    Tasks
+  </button>
+  <button class="nav-btn" onclick="showPage('log',this)">
+    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+    Log
+  </button>
+  <button class="nav-btn" onclick="showPage('konfirmasi',this)">
+    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    Konfirmasi
+  </button>
+</nav>
+
+<script>
+// ============ STATE ============
+let SHEET_URL = localStorage.getItem('kpi_sheet_url') || '';
+let state = {
+  progress: {o1k1:0,o1k2:0,o1k3:0,o1k4:0,o2k1:0,o2k2:0,o2k3:0,o2k4:0,o2k5:0},
+  tasks: [],
+  logs: [],
+  konfirmasi: {}
+};
+
+// ============ KONFIRMASI DATA ============
+const konfirmasiO1 = [
+  {id:'k1',text:'Backend O5 agent — milik siapa, sudah seberapa jauh, ready kapan di Q3? Ada fallback kalau belum ready?'},
+  {id:'k2',text:'Sentry — sudah terpasang di FYP/PDS/PLN? Kalau belum, siapa yang setup dan apakah ini scope QA atau backend?'},
+  {id:'k3',text:'G1 & G4 — definisi resminya apa dalam konteks Rakamin? (G2=input gate, G3=release-ready sudah clear)'},
+  {id:'k4',text:'Module owner assignment — sudah ada mapping resmi siapa own module apa, atau Medio yang inisiasi?'},
+  {id:'k5',text:'Weekly report ke CTO — preferensi format dan platform apa (Coda/spreadsheet/Mattermost)?'},
+  {id:'k6',text:'G1–G4 roll out ke semua project sekaligus (FYP+PDS+PLN) atau ada urutan prioritas?'},
+];
+const konfirmasiO2 = [
+  {id:'k7',text:'Kandidat module fullstack — sudah bisa Medio own atau masih dalam fixing phase?'},
+  {id:'k8',text:'GitHub issues untuk escalation — di repo mana per project (FYP, PDS, PLN)?'},
+  {id:'k9',text:'Specialist reviewer per domain PR — siapa yang review untuk FE, BE, data masing-masing?'},
+  {id:'k10',text:'Exceeded O2: CI-gate improvement — apakah ini connect ke Playwright automation dari Q2 atau ada ekspektasi lain?'},
+];
+
+// ============ TEMPLATE TASKS ============
+const templateTasks = [
+  {title:'Konfirmasi Backend O5 ke Pak Ilham',outcome:'General',week:'W1'},
+  {title:'Konfirmasi Sentry sudah ada di FYP/PLN ke Pak Ilham',outcome:'General',week:'W1'},
+  {title:'Finalisasi definisi G1, G2, G3, G4 dengan Pak Ilham',outcome:'O1',week:'W1'},
+  {title:'Buat template G2 input gate (AC Given/When/Then)',outcome:'O1',week:'W1'},
+  {title:'Establish baseline fix-in-place ratio (Month 1)',outcome:'O2',week:'W1'},
+  {title:'Mulai setup GitHub issues untuk clean escalation',outcome:'O2',week:'W1'},
+  {title:'Konfirmasi kandidat module fullstack ke Pak Ilham',outcome:'O2',week:'W1'},
+  {title:'Buat template G3 release-ready gate',outcome:'O1',week:'W2'},
+  {title:'Setup artifact standard di Coda (test scenarios + QA report + sign-off)',outcome:'O1',week:'W2'},
+  {title:'Propose weekly report format ke Pak Ilham',outcome:'O1',week:'W2'},
+  {title:'Fix bug pertama via PR (AI-assisted, timebox 45 mnt)',outcome:'O2',week:'W2'},
+  {title:'G1–G4 enforced di FYP',outcome:'O1',week:'W3'},
+  {title:'Module 1 fullstack — mulai build (UI + API + data + tests)',outcome:'O2',week:'W3'},
+  {title:'First weekly quality report ke CTO',outcome:'O1',week:'W3'},
+  {title:'Sentry setup & dashboard draft',outcome:'O1',week:'W4'},
+  {title:'G1–G4 enforced di PLN',outcome:'O1',week:'W4'},
+  {title:'Module 1 — delivered + demo',outcome:'O2',week:'W4'},
+  {title:'Fix ratio bulan 2 — tracking & naik dari baseline',outcome:'O2',week:'W5'},
+  {title:'Module 2 fullstack — mulai build',outcome:'O2',week:'W5'},
+  {title:'Dashboard monitoring live (CTO-readable)',outcome:'O1',week:'W5'},
+  {title:'Module 2 — delivered + demo',outcome:'O2',week:'W6'},
+  {title:'G1–G4 enforced di PDS',outcome:'O1',week:'W6'},
+  {title:'Mid-Q3 review — progress vs target',outcome:'General',week:'W6'},
+  {title:'Module 3 fullstack — mulai build',outcome:'O2',week:'W7'},
+  {title:'Push module owners self-serve (Exceeded O1)',outcome:'O1',week:'W7'},
+  {title:'Fix ratio ≥30% — verifikasi tercapai',outcome:'O2',week:'W8'},
+  {title:'Module 3 — delivered + demo',outcome:'O2',week:'W8'},
+  {title:'P0/P1 escape comparison Q2 vs Q3',outcome:'O1',week:'W8'},
+  {title:'CI-gate improvement proposal (Exceeded O2)',outcome:'O2',week:'W8'},
+];
+
+// ============ INIT ============
+function init() {
+  loadFromStorage();
+  renderKonfirmasi();
+  renderTasks();
+  renderLogs();
+  updateDashboard();
+  updateProgress();
+  updateSyncStatus();
+  updateDaysLeft();
+}
+
+function loadFromStorage() {
+  const saved = localStorage.getItem('kpi_state');
+  if (saved) {
+    try { state = {...state, ...JSON.parse(saved)}; } catch(e) {}
+  }
+  // restore sliders
+  Object.entries(state.progress).forEach(([k,v]) => {
+    const slider = document.querySelector(`[oninput="updateSlider('${k}',this.value)"]`);
+    if(slider) slider.value = v;
+    const pctEl = document.getElementById(`pct-${k}`);
+    if(pctEl) pctEl.textContent = v+'%';
+  });
+}
+
+function saveToStorage() {
+  localStorage.setItem('kpi_state', JSON.stringify(state));
+}
+
+// ============ NAVIGATION ============
+function showPage(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ============ SETUP ============
+function openSetupModal() { document.getElementById('setupModal').classList.add('open'); }
+function closeSetupModal() { document.getElementById('setupModal').classList.remove('open'); }
+function saveSheetUrl() {
+  const url = document.getElementById('sheetUrlInput').value.trim();
+  if (!url) { showToast('URL tidak boleh kosong','error'); return; }
+  SHEET_URL = url;
+  localStorage.setItem('kpi_sheet_url', url);
+  closeSetupModal();
+  showToast('URL tersimpan! Mencoba sync...','success');
+  syncFromSheets();
+}
+function updateSyncStatus() {
+  const el = document.getElementById('syncStatus');
+  if (SHEET_URL) {
+    el.innerHTML = '<span style="color:var(--green);">● Connected</span>';
+  } else {
+    el.innerHTML = '<span style="color:var(--text3);">○ Belum connect ke Sheets</span>';
+  }
+}
+
+// ============ PROGRESS ============
+function updateSlider(key, val) {
+  state.progress[key] = parseInt(val);
+  document.getElementById('pct-'+key).textContent = val+'%';
+  updateDashboard();
+  saveToStorage();
+}
+
+function calcO1() {
+  const {o1k1,o1k2,o1k3,o1k4} = state.progress;
+  return Math.round((o1k1+o1k2+o1k3+o1k4)/4);
+}
+function calcO2() {
+  const {o2k1,o2k2,o2k3,o2k4,o2k5} = state.progress;
+  return Math.round((o2k1+o2k2+o2k3+o2k4+o2k5)/5);
+}
+function calcOverall() {
+  return Math.round(calcO1()*0.6 + calcO2()*0.4);
+}
+
+function updateDashboard() {
+  const o1 = calcO1(), o2 = calcO2(), overall = calcOverall();
+  document.getElementById('overallPct').textContent = overall+'%';
+  document.getElementById('overallBar').style.width = overall+'%';
+  document.getElementById('dashO1Bar').style.width = o1+'%';
+  document.getElementById('dashO1Pct').textContent = o1+'%';
+  document.getElementById('dashO2Bar').style.width = o2+'%';
+  document.getElementById('dashO2Pct').textContent = o2+'%';
+  renderTodayTasks();
+  renderRecentLogs();
+  updateStats();
+}
+
+function updateProgress() {
+  // update dashboard bars from current state
+  updateDashboard();
+}
+
+async function saveProgress() {
+  saveToStorage();
+  if (!SHEET_URL) { showToast('Setup Google Sheets dulu ya!','error'); return; }
+  showToast('Menyimpan ke Sheets...');
+  try {
+    await fetch(SHEET_URL, {
+      method:'POST', mode:'no-cors',
+      body: JSON.stringify({action:'saveProgress', data: state.progress, timestamp: new Date().toISOString()})
+    });
+    showToast('Progress tersimpan ke Sheets ✓','success');
+  } catch(e) {
+    showToast('Tersimpan lokal. Sheets error.','error');
+  }
+}
+
+// ============ TASKS ============
+function openTaskModal() { document.getElementById('taskModal').classList.add('open'); }
+function closeTaskModal() { document.getElementById('taskModal').classList.remove('open'); }
+
+function addTask() {
+  const title = document.getElementById('taskTitle').value.trim();
+  if (!title) { showToast('Isi nama task dulu','error'); return; }
+  const task = {
+    id: Date.now(),
+    title,
+    outcome: document.getElementById('taskOutcome').value,
+    week: document.getElementById('taskWeek').value,
+    done: false,
+    createdAt: new Date().toISOString()
+  };
+  state.tasks.unshift(task);
+  saveToStorage();
+  renderTasks();
+  closeTaskModal();
+  document.getElementById('taskTitle').value = '';
+  showToast('Task ditambahkan ✓','success');
+  syncTaskToSheets(task);
+}
+
+function toggleTask(id) {
+  const task = state.tasks.find(t => t.id === id);
+  if (task) {
+    task.done = !task.done;
+    task.doneAt = task.done ? new Date().toISOString() : null;
+    saveToStorage();
+    renderTasks();
+    updateDashboard();
+    if (task.done) showToast('Task selesai! ✓','success');
+  }
+}
+
+function deleteTask(id) {
+  state.tasks = state.tasks.filter(t => t.id !== id);
+  saveToStorage();
+  renderTasks();
+  showToast('Task dihapus');
+}
+
+function loadTemplateTasks() {
+  if (state.tasks.length > 0) {
+    if (!confirm('Load template akan menambah task default. Lanjut?')) return;
+  }
+  const existing = new Set(state.tasks.map(t => t.title));
+  const newTasks = templateTasks
+    .filter(t => !existing.has(t.title))
+    .map(t => ({...t, id: Date.now() + Math.random(), done: false, createdAt: new Date().toISOString()}));
+  state.tasks = [...state.tasks, ...newTasks];
+  saveToStorage();
+  renderTasks();
+  showToast(`${newTasks.length} template task ditambahkan ✓`,'success');
+}
+
+const weekLabels = {W1:'Minggu 1 — Juli Awal',W2:'Minggu 2 — Juli Pertengahan',W3:'Minggu 3 — Juli Akhir',W4:'Minggu 4 — Agustus Awal',W5:'Minggu 5 — Agustus Pertengahan',W6:'Minggu 6 — Agustus Akhir',W7:'Minggu 7 — September Awal',W8:'Minggu 8 — September Akhir'};
+
+function renderTasks() {
+  const el = document.getElementById('taskList');
+  if (!state.tasks.length) {
+    el.innerHTML = '<div class="empty"><div class="empty-icon">✅</div>Belum ada task. Load template atau tambah manual.</div>';
+    return;
+  }
+  const grouped = {};
+  state.tasks.forEach(t => {
+    if (!grouped[t.week]) grouped[t.week] = [];
+    grouped[t.week].push(t);
+  });
+  let html = '';
+  ['W1','W2','W3','W4','W5','W6','W7','W8'].forEach(week => {
+    if (!grouped[week]) return;
+    const tasks = grouped[week];
+    const done = tasks.filter(t=>t.done).length;
+    html += `<div class="week-group-label">${weekLabels[week] || week} · ${done}/${tasks.length}</div>`;
+    tasks.forEach(t => {
+      const outColor = t.outcome === 'O1' ? 'o1' : t.outcome === 'O2' ? 'o2' : '';
+      html += `<div class="task-item ${t.done?'done':''}">
+        <div class="task-check ${t.done?'checked':''}" onclick="toggleTask(${t.id})"></div>
+        <div class="task-body">
+          <div class="task-title">${t.title}</div>
+          <div class="task-meta">
+            ${outColor ? `<span class="tag ${outColor==='o1'?'':'yellow'}" style="border-color:${outColor==='o1'?'var(--o1)':'var(--o2)'};color:${outColor==='o1'?'var(--o1)':'var(--o2)'};">${t.outcome}</span>` : ''}
+          </div>
+        </div>
+        <button class="task-delete" onclick="deleteTask(${t.id})">×</button>
+      </div>`;
+    });
+  });
+  el.innerHTML = html;
+  updateStats();
+}
+
+function renderTodayTasks() {
+  const today = new Date().toDateString();
+  // Show incomplete tasks from current/next week
+  const pending = state.tasks.filter(t => !t.done).slice(0,3);
+  const el = document.getElementById('todayTasks');
+  if (!pending.length) {
+    el.innerHTML = '<div class="empty"><div class="empty-icon">🎉</div>Semua task selesai!</div>';
+    return;
+  }
+  el.innerHTML = pending.map(t => `
+    <div class="task-item ${t.done?'done':''}">
+      <div class="task-check ${t.done?'checked':''}" onclick="toggleTask(${t.id})"></div>
+      <div class="task-body">
+        <div class="task-title">${t.title}</div>
+        <div class="task-meta"><span class="task-week">${weekLabels[t.week]||t.week}</span></div>
+      </div>
+    </div>`).join('');
+}
+
+// ============ LOGS ============
+function openLogModal() { document.getElementById('logModal').classList.add('open'); }
+function closeLogModal() { document.getElementById('logModal').classList.remove('open'); }
+
+function addLog() {
+  const text = document.getElementById('logText').value.trim();
+  if (!text) { showToast('Isi log dulu ya','error'); return; }
+  const log = {
+    id: Date.now(),
+    outcome: document.getElementById('logOutcome').value,
+    text,
+    date: new Date().toISOString()
+  };
+  state.logs.unshift(log);
+  saveToStorage();
+  renderLogs();
+  renderRecentLogs();
+  closeLogModal();
+  document.getElementById('logText').value = '';
+  showToast('Log disimpan ✓','success');
+  syncLogToSheets(log);
+  updateStats();
+}
+
+function deleteLog(id) {
+  state.logs = state.logs.filter(l => l.id !== id);
+  saveToStorage();
+  renderLogs();
+  renderRecentLogs();
+  updateStats();
+}
+
+function renderLogs() {
+  const el = document.getElementById('logList');
+  if (!state.logs.length) {
+    el.innerHTML = '<div class="empty"><div class="empty-icon">📝</div>Belum ada log. Mulai catat progress harianmu!</div>';
+    return;
+  }
+  el.innerHTML = state.logs.map(l => {
+    const d = new Date(l.date);
+    const dateStr = d.toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'});
+    const timeStr = d.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+    const outClass = l.outcome === 'O1' ? 'o1' : l.outcome === 'O2' ? 'o2' : '';
+    return `<div class="log-item">
+      <div class="log-header">
+        <span class="log-date">${dateStr} ${timeStr}</span>
+        <div style="display:flex;align-items:center;gap:6px;">
+          ${outClass ? `<span class="log-outcome ${outClass}">${l.outcome}</span>` : ''}
+          <button class="log-delete" onclick="deleteLog(${l.id})">×</button>
+        </div>
+      </div>
+      <div class="log-text">${l.text.replace(/\n/g,'<br>')}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderRecentLogs() {
+  const el = document.getElementById('recentLogs');
+  const recent = state.logs.slice(0,2);
+  if (!recent.length) {
+    el.innerHTML = '<div class="empty"><div class="empty-icon">📝</div>Belum ada log</div>';
+    return;
+  }
+  el.innerHTML = recent.map(l => {
+    const d = new Date(l.date);
+    const dateStr = d.toLocaleDateString('id-ID',{day:'numeric',month:'short'});
+    const outClass = l.outcome === 'O1' ? 'o1' : l.outcome === 'O2' ? 'o2' : '';
+    return `<div class="log-item">
+      <div class="log-header">
+        <span class="log-date">${dateStr}</span>
+        ${outClass ? `<span class="log-outcome ${outClass}">${l.outcome}</span>` : ''}
+      </div>
+      <div class="log-text">${l.text.slice(0,120)}${l.text.length>120?'...':''}</div>
+    </div>`;
+  }).join('');
+}
+
+// ============ KONFIRMASI ============
+function renderKonfirmasi() {
+  renderKonfirmasiList('konfirmasiO1List', konfirmasiO1);
+  renderKonfirmasiList('konfirmasiO2List', konfirmasiO2);
+  updateKonfirmasiProgress();
+}
+
+function renderKonfirmasiList(elId, items) {
+  const el = document.getElementById(elId);
+  el.innerHTML = items.map(item => {
+    const checked = state.konfirmasi[item.id] || false;
+    return `<div class="konfirmasi-item ${checked?'checked-item':''}">
+      <div class="konfirmasi-check ${checked?'checked':''}" onclick="toggleKonfirmasi('${item.id}')"></div>
+      <div class="konfirmasi-text">${item.text}</div>
+    </div>`;
+  }).join('');
+}
+
+function toggleKonfirmasi(id) {
+  state.konfirmasi[id] = !state.konfirmasi[id];
+  saveToStorage();
+  renderKonfirmasi();
+  updateStats();
+}
+
+function updateKonfirmasiProgress() {
+  const total = konfirmasiO1.length + konfirmasiO2.length;
+  const done = Object.values(state.konfirmasi).filter(Boolean).length;
+  document.getElementById('konfirmasiBar').style.width = (done/total*100)+'%';
+  document.getElementById('konfirmasiPct').textContent = `${done}/${total}`;
+}
+
+// ============ STATS ============
+function updateStats() {
+  const todayDone = state.tasks.filter(t => {
+    if (!t.done || !t.doneAt) return false;
+    return new Date(t.doneAt).toDateString() === new Date().toDateString();
+  }).length;
+  document.getElementById('statTasks').textContent = todayDone;
+  document.getElementById('statLogs').textContent = state.logs.length;
+  const pending = Object.values(state.konfirmasi).filter(v=>!v).length + (konfirmasiO1.length + konfirmasiO2.length - Object.keys(state.konfirmasi).length);
+  document.getElementById('statKonfirmasi').textContent = Math.max(0, konfirmasiO1.length + konfirmasiO2.length - Object.values(state.konfirmasi).filter(Boolean).length);
+}
+
+function updateDaysLeft() {
+  const end = new Date('2026-09-30');
+  const now = new Date();
+  const diff = Math.ceil((end-now)/(1000*60*60*24));
+  document.getElementById('statDaysLeft').textContent = Math.max(0,diff);
+}
+
+// ============ SHEETS SYNC ============
+async function syncFromSheets() {
+  if (!SHEET_URL) return;
+  try {
+    const res = await fetch(SHEET_URL + '?action=get', {mode:'cors'});
+    const data = await res.json();
+    if (data.progress) state.progress = {...state.progress, ...data.progress};
+    if (data.tasks) state.tasks = data.tasks;
+    if (data.logs) state.logs = data.logs;
+    saveToStorage();
+    loadFromStorage();
+    renderTasks();
+    renderLogs();
+    updateDashboard();
+    showToast('Sync dari Sheets berhasil ✓','success');
+    updateSyncStatus();
+  } catch(e) {
+    showToast('Data dari lokal. Sheets belum tersambung.','error');
+  }
+}
+
+async function syncTaskToSheets(task) {
+  if (!SHEET_URL) return;
+  try {
+    await fetch(SHEET_URL, {method:'POST', mode:'no-cors',
+      body: JSON.stringify({action:'addTask', data: task})});
+  } catch(e) {}
+}
+
+async function syncLogToSheets(log) {
+  if (!SHEET_URL) return;
+  try {
+    await fetch(SHEET_URL, {method:'POST', mode:'no-cors',
+      body: JSON.stringify({action:'addLog', data: log})});
+  } catch(e) {}
+}
+
+// ============ TOAST ============
+function showToast(msg, type='') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast' + (type ? ' '+type : '');
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2500);
+}
+
+// ============ MODAL CLOSE ON OVERLAY ============
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', e => {
+    if (e.target === overlay) overlay.classList.remove('open');
+  });
+});
+
+// ============ START ============
+init();
+</script>
+
+<!-- SETUP GUIDE -->
+<div style="max-width:600px;margin:2rem auto;padding:0 1rem 2rem;">
+  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-lg);padding:1.25rem;">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.75rem;">📋 Panduan Setup Google Sheets</div>
+    <div style="font-size:12px;color:var(--text2);line-height:1.8;">
+      <b style="color:var(--text);">Step 1:</b> Buat Google Spreadsheet baru → beri nama <code style="background:var(--bg3);padding:1px 5px;border-radius:4px;font-family:'JetBrains Mono',monospace;">Q3 KPI Tracker - Medio Alvine</code><br><br>
+      <b style="color:var(--text);">Step 2:</b> Buka <b>Extensions → Apps Script</b>, hapus kode yang ada, paste kode di bawah ini:<br><br>
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:0.875rem;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text2);line-height:1.7;overflow-x:auto;">
+const SS = SpreadsheetApp.getActiveSpreadsheet();<br><br>
+function doPost(e) {<br>
+&nbsp;&nbsp;const d = JSON.parse(e.postData.contents);<br>
+&nbsp;&nbsp;if (d.action === 'saveProgress') saveProgress(d.data, d.timestamp);<br>
+&nbsp;&nbsp;if (d.action === 'addTask') addRow('Tasks', d.data);<br>
+&nbsp;&nbsp;if (d.action === 'addLog') addRow('Logs', d.data);<br>
+&nbsp;&nbsp;return ContentService.createTextOutput('ok');<br>
+}<br><br>
+function doGet(e) {<br>
+&nbsp;&nbsp;return ContentService.createTextOutput(JSON.stringify({status:'ok'})).setMimeType(ContentService.MimeType.JSON);<br>
+}<br><br>
+function saveProgress(data, ts) {<br>
+&nbsp;&nbsp;let sh = SS.getSheetByName('Progress') || SS.insertSheet('Progress');<br>
+&nbsp;&nbsp;sh.appendRow([ts, ...Object.values(data)]);<br>
+}<br><br>
+function addRow(shName, data) {<br>
+&nbsp;&nbsp;let sh = SS.getSheetByName(shName) || SS.insertSheet(shName);<br>
+&nbsp;&nbsp;sh.appendRow([new Date().toISOString(), JSON.stringify(data)]);<br>
+}
+      </div>
+      <br>
+      <b style="color:var(--text);">Step 3:</b> Klik <b>Deploy → New Deployment → Web App</b><br>
+      &nbsp;&nbsp;• Execute as: <b>Me</b><br>
+      &nbsp;&nbsp;• Who has access: <b>Anyone</b><br>
+      &nbsp;&nbsp;• Klik <b>Deploy</b> → copy URL yang muncul<br><br>
+      <b style="color:var(--text);">Step 4:</b> Klik tombol <b>⚙ Google Sheets</b> di app ini → paste URL tadi → Simpan
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
